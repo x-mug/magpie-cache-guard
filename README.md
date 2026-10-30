@@ -20,11 +20,11 @@ github:x-mug/magpie-cache-guard
 magpie plugin add github:x-mug/magpie-cache-guard
 ```
 
-固定版本可用 `github:x-mug/magpie-cache-guard#v0.8.6`。配置、阈值与日常刷新均在 Magpie 页面内完成。它只读本机用量账本，不请求模型。
+固定版本可用 `github:x-mug/magpie-cache-guard#v0.8.7`。配置、阈值与日常刷新均在 Magpie 页面内完成。它只读本机用量账本，不请求模型。
 
-[magpie-cache-guard](https://github.com/x-mug/magpie-cache-guard) 是可直接安装的独立发布仓库，根目录包含插件 manifest、入口和页面，由 [magpie-plugins](https://github.com/x-mug/magpie-plugins/tree/main/plugins/magpie-cache-guard) 的子目录在 CI 通过后自动同步。请在主仓库提交代码修改，不要在发布仓库重复维护。
+本仓库是缓存看守的源码仓库，根目录就是插件本体。合集 [magpie-plugins](https://github.com/x-mug/magpie-plugins) 用 submodule 把本仓库索引进去，只用于浏览和统一校验，不参与发布。
 
-离线安装可在 [Releases](https://github.com/x-mug/magpie-cache-guard/releases) 下载 `.tgz`，解压到固定目录，再添加解压后的 `package` 文件夹绝对路径。主源码仓库的根目录仍是合集工具包，不作为插件安装。
+离线安装可在 [Releases](https://github.com/x-mug/magpie-cache-guard/releases) 下载 `.tgz`，解压到固定目录，再添加解压后的 `package` 文件夹绝对路径。合集仓库 `x-mug/magpie-plugins` 的根目录是工具包，不作为插件安装。
 
 装好后侧边栏 **Plugins** 组里多一个 **缓存看守** 页面；插件本身不提供供应商，没有登录和模型列表，属正常。
 
@@ -92,6 +92,28 @@ node scripts/check-ledger.mjs
 ```
 
 用当前账本回放，列出每组会触发多少次告警。实测：DSH 的 cursor/codex 组会命中，zed、Codex CLI、Claude Code 组不告警。
+
+## 开发与发版
+
+需要 Node.js 24，核心校验不依赖第三方库：
+
+```sh
+node tools/verify.mjs
+```
+
+页面校验用本机 Chrome / Edge 跑无头回归，不读用户账本：
+
+```sh
+node verification/run-browser.mjs --browser /path/to/chrome
+```
+
+打包并校验内容，顺带生成 `dist/SHA256SUMS.txt`：
+
+```sh
+mkdir -p dist && npm pack --ignore-scripts --pack-destination dist && node tools/check-packages.mjs
+```
+
+`main` 推送后 CI 跑 Linux / Windows 校验与打包，Windows 另跑浏览器回归；通过后 `Publish release` 按 `package.json` 的版本打 `v<版本>` tag 并发 Release。版本号三处必须一致：`package.json` 的 `version`、`page/index.html` 的 `data-build` 与 `#build` 徽章。同版本 tag 已存在时发版跳过，重跑安全。
 
 ## 注意
 

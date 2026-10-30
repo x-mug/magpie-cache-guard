@@ -1,6 +1,6 @@
 {
   "name": "magpie-cache-guard",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "magpie plugin: prompt-cache dashboard (1h / today / 7d / 30d) with per-agent-model hit rates and low-hit alerts",
   "type": "module",
   "main": "./index.mjs",
@@ -17,12 +17,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/x-mug/magpie-plugins.git",
-    "directory": "plugins/magpie-cache-guard"
+    "url": "https://github.com/x-mug/magpie-cache-guard.git"
   },
-  "homepage": "https://github.com/x-mug/magpie-plugins/tree/main/plugins/magpie-cache-guard",
+  "homepage": "https://github.com/x-mug/magpie-cache-guard",
   "bugs": {
-    "url": "https://github.com/x-mug/magpie-plugins/issues"
+    "url": "https://github.com/x-mug/magpie-cache-guard/issues"
   },
   "keywords": [
     "magpie",

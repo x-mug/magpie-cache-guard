@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify plugin
+        run: node tools/verify.mjs
+      - name: Create package directory
+        run: node -e "require('fs').mkdirSync('dist',{recursive:true})"
+      - name: Pack
+        run: npm pack --ignore-scripts --pack-destination dist
+      - name: Verify package contents
+        run: node tools/check-packages.mjs
+      - name: Browser regression
+        if: runner.os == 'Windows'
+        run: node verification/run-browser.mjs

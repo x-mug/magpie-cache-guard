@@ -22,6 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Verify plugin
+        run: node tools/verify.mjs
       - name: Publish tag and release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -35,7 +37,7 @@ jobs:
           fi
           mkdir -p dist
           npm pack --ignore-scripts --pack-destination dist
-          node -e "const fs=require('fs'),c=require('crypto'),d='dist';const f=fs.readdirSync(d).find(n=>n.endsWith('.tgz'));fs.writeFileSync(d+'/SHA256SUMS.txt',c.createHash('sha256').update(fs.readFileSync(d+'/'+f)).digest('hex')+'  '+f+'\n')"
+          node tools/check-packages.mjs
           {
             printf '安装或更新：在 Magpie 的 Plugins → 添加插件中输入 `github:x-mug/magpie-cache-guard`，或执行 `magpie plugin add github:x-mug/magpie-cache-guard`；固定版本用 `github:x-mug/magpie-cache-guard#%s`。\n\n' "$tag"
             printf '离线安装包 `magpie-cache-guard-%s.tgz` 需先解压到固定目录，再添加其中 `package` 文件夹的绝对路径；`SHA256SUMS.txt` 是校验和。\n\n' "$version"
